@@ -1,8 +1,8 @@
-### Global args
+#### GLOBAL
 ARG PROJECT_DIR="/project"
 
 
-### COMPILE PHASE
+#### COMPILE STAGE
 FROM maven:3.6.3-jdk-11-openj9 as compile
 
 # Args
@@ -35,11 +35,11 @@ RUN mvn --no-transfer-progress clean package
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 
-#### BUILD PHASE
+#### BUILD STAGE
 FROM adoptopenjdk:11-jdk-openj9
 
 # Build args
-ARG ARTIFACT_ID=springboot-swagger-jpa-stack
+ARG ARTIFACT_TITLE=springboot-swagger-jpa-stack
 ARG ARTIFACT_VERSION=1.0.0-SNAPSHOT
 ARG PROJECT_DIR
 
@@ -62,7 +62,7 @@ USER java_user:java_group
 WORKDIR /app
 
 # Label the image
-LABEL org.opencontainers.image.title="${ARTIFACT_ID}"
+LABEL org.opencontainers.image.title="${ARTIFACT_TITLE}"
 LABEL org.opencontainers.image.version="${ARTIFACT_VERSION}"
 
 # Layering the app instead of using the fat jar 

@@ -169,7 +169,7 @@ There are a couple of build args provided, with defaults:
 
 | ARG | Default | Purposes  |
 | --- | --- | --- |
-| ARTIFACT_ID  | "springboot-swagger-jpa-stack" | To tag the Docker image title: `LABEL org.opencontainers.image.title="${ARTIFACT_ID}"` |
+| ARTIFACT_TITLE  | "springboot-swagger-jpa-stack" | To tag the Docker image title: `LABEL org.opencontainers.image.title="${ARTIFACT_TITLE}"` |
 | ARTIFACT_VERSION  | "1.0.0-SNAPSHOT" | To tag the Docker image version: `LABEL org.opencontainers.image.version="${ARTIFACT_VERSION}"` |
 
 For example, if we want to build the Image tagged as:
@@ -178,7 +178,7 @@ For example, if we want to build the Image tagged as:
 
 ```
 $ docker build \
-  --build-arg ARTIFACT_ID="my-app" \
+  --build-arg ARTIFACT_TITLE="my-app" \
   --build-arg ARTIFACT_VERSION="1.0.0" \
   -t mydockerhubaccount/springboot-swagger-jpa:1.0.0 .
 ```
