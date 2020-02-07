@@ -155,7 +155,56 @@ Click the Connect button and we can play with the database.
 
 ![h2-main](misc/screenshot-h2-main.png "H2 Main")
 
-### 
+### Containerize It
+
+A `Dockerfile` is provided for you to containerize the app with multi-stage build in mind.
+
+A sample build process may look like:
+
+```
+$ docker build -t mydockerhubaccount/springboot-swagger-jpa .
+```
+
+There are a couple of build args provided, with defaults:
+
+| ARG | Default | Purposes  |
+| --- | --- | --- | --- |
+| ARTIFACT_ID  | "springboot-swagger-jpa-stack" | To tag the Docker image title: `LABEL org.opencontainers.image.title="${ARTIFACT_ID}"` |
+| ARTIFACT_VERSION  | "1.0.0-SNAPSHOT" | To tag the Docker image version: `LABEL org.opencontainers.image.version="${ARTIFACT_VERSION}"` |
+
+For example, if we want to build the Image tagged as:
+- org.opencontainers.image.title=springboot-swagger-jpa-stack
+- org.opencontainers.image.version=1.0.0
+
+```
+$ docker build \
+  --build-arg ARTIFACT_ID="my-app" \
+  --build-arg ARTIFACT_VERSION="1.0.0" \
+  -t mydockerhubaccount/springboot-swagger-jpa:1.0.0 .
+```
+
+Meanwhile, there are also env variables for running:
+
+| ENV | Default | Purposes  |
+| --- | --- | --- | --- |
+| JVM_ARGS  | "" | To tune the JVM args if there is a need |
+
+Please note that we always can inject the environment variables as well to influence some desirable behavious like `SPRING_PROFILES_ACTIVE`.
+
+So to run it with desired `JVM_ARGS` and `SPRING_PROFILES_ACTIVE`, we can do this:
+
+```
+$ docker run \
+  -e "SPRING_PROFILES_ACTIVE=prod" \
+  -e "JVM_ARGS=-Xms2G -Xmx2G" \
+  -p "8080:8080" \
+  mydockerhubaccount/springboot-swagger-jpa:1.0.0
+```
+
+> Note: 
+> 1. Make sure you really have the **`prod`** profile defined as `/src/main/resources/application-prod.yml` -- for this project there is only one profile named `dev`;
+> 2. Change the **`mydockerhubaccount`** to yours, or use your image naming pattern instead.
+
 
 ## References
 
