@@ -155,7 +155,7 @@ Click the Connect button and we can play with the database.
 
 ![h2-main](misc/screenshot-h2-main.png "H2 Main")
 
-### Containerize It
+### Containerize & Run It
 
 A `Dockerfile` is provided for you to containerize the app with multi-stage build in mind.
 
@@ -168,7 +168,7 @@ $ docker build -t mydockerhubaccount/springboot-swagger-jpa .
 There are a couple of build args provided, with defaults:
 
 | ARG | Default | Purposes  |
-| --- | --- | --- | --- |
+| --- | --- | --- |
 | ARTIFACT_ID  | "springboot-swagger-jpa-stack" | To tag the Docker image title: `LABEL org.opencontainers.image.title="${ARTIFACT_ID}"` |
 | ARTIFACT_VERSION  | "1.0.0-SNAPSHOT" | To tag the Docker image version: `LABEL org.opencontainers.image.version="${ARTIFACT_VERSION}"` |
 
@@ -186,7 +186,7 @@ $ docker build \
 Meanwhile, there are also env variables for running:
 
 | ENV | Default | Purposes  |
-| --- | --- | --- | --- |
+| --- | --- | --- |
 | JVM_ARGS  | "" | To tune the JVM args if there is a need |
 
 Please note that we always can inject the environment variables as well to influence some desirable behavious like `SPRING_PROFILES_ACTIVE`.
