@@ -146,10 +146,10 @@ Open a browser and navigate to: http://localhost:8080/h2-console
 
 ![h2-login](misc/screenshot-h2-login.png "H2 Login")
 
-Make sure
-1. **JDBC URL** is: `jdbc:h2:mem:testdb`
-2. **User Name** is: sa
-3. **Password** is empty string.
+Make sure:
+- **JDBC URL** is: `jdbc:h2:mem:testdb`
+- **User Name** is: `sa`
+- **Password** is empty string.
 
 Click the Connect button and we can play with the database.
 
@@ -173,7 +173,7 @@ There are a couple of build args provided, with defaults:
 | ARTIFACT_VERSION  | "1.0.0-SNAPSHOT" | To tag the Docker image version: `LABEL org.opencontainers.image.version="${ARTIFACT_VERSION}"` |
 
 For example, if we want to build the Image tagged as:
-- org.opencontainers.image.title=springboot-swagger-jpa-stack
+- org.opencontainers.image.title=my-app
 - org.opencontainers.image.version=1.0.0
 
 ```
@@ -183,7 +183,7 @@ $ docker build \
   -t mydockerhubaccount/springboot-swagger-jpa:1.0.0 .
 ```
 
-Meanwhile, there are also env variables for running:
+Meanwhile, there are also env variables for run time:
 
 | ENV | Default | Purposes  |
 | --- | --- | --- |
@@ -204,7 +204,7 @@ $ docker run \
 ...
 ```
 
-> Note: 
+> Notes: 
 > 1. Make sure you really have the **`prod`** profile defined as `/src/main/resources/application-prod.yml` -- for this project there is only one profile named `dev`;
 > 2. Change the **`mydockerhubaccount`** to yours, or use your image naming pattern instead.
 
