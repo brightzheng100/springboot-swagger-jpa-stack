@@ -1,0 +1,24 @@
+#
+# application.yml
+#
+# This will become the "default" profile
+# And it includes the "common settings" of all other profiles for application
+# 
+
+
+# Server settings
+server:
+  port: 8080
+
+# Path of the dispatcher servlet.
+spring:
+  mvc:
+    servlet:
+      path: /
+
+# app name and build version updated during build process from Maven properties.
+info:
+  app:
+    name: '@project.artifactId@'
+  build:
+    version: '@project.version@'

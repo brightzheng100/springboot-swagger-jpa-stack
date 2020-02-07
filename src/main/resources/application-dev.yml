@@ -1,0 +1,60 @@
+#
+# application-{profile}.yml
+#
+# This is the dev profile, we may have more profiles like qa, prod
+# by following the naming pattern: application-{profile}.yml
+# 
+
+
+# Spring configuration
+spring:
+  profiles:
+    active: dev                           # env profile
+    include:                              # including profiles, e.g. DB
+    - h2
+  h2.console.enabled: true                # enabling H2 Console: /h2-console
+  datasource:
+    platform: h2                          # database platform
+    url: jdbc:h2:mem:testdb
+  redis:
+    host: localhost
+    port: 6379
+  flyway:                                 # flyway
+    schemas:
+    - PUBLIC
+
+# Logging
+logging:
+  level:
+    root: ERROR                           # ERROR level at root
+    org.springframework: INFO             # INFO level for Spring
+    app: INFO                             # INFO level for application
+  pattern:
+    console: "==> [%p] %c{1}(%L) - %m%n"
+
+# Actuator Configuration
+# Ref: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
+management:
+  endpoints:
+    enabled-by-default: false             # defaults it to false and expose only what you want
+    web:
+      exposure:
+        include:
+        - info
+        - health
+        - prometheus
+        - flyway
+        - loggers
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+      show-details: always
+    flyway:
+      enabled: true
+    loggers:
+      enabled: true
+    prometheus:
+      enabled: true
+    
