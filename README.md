@@ -13,7 +13,7 @@ If you want to build RESTful APIs with DB as the backend, you may think of:
 - Using Spring Boot Test Framework with Junit, [Rest Assured](https://github.com/rest-assured/rest-assured) for testing.
 - etc.
 
-But make all these framworks fully integrated may take some effort.
+But make all these frameworks fully integrated may take some effort.
 
 So the aim of this sample Java project is to integrate them with some practices and sample code for you to start with.
 
@@ -189,9 +189,9 @@ Meanwhile, there are also env variables for running:
 | --- | --- | --- |
 | JVM_ARGS  | "" | To tune the JVM args if there is a need |
 
-Please note that we always can inject the environment variables as well to influence some desirable behavious like `SPRING_PROFILES_ACTIVE`.
+Please note that we always can inject the environment variables as well to influence some desired behaviours, like what Spring profiles to be activated by `SPRING_PROFILES_ACTIVE`.
 
-So to run it with desired `JVM_ARGS` and `SPRING_PROFILES_ACTIVE`, we can do this:
+So to run it with `JVM_ARGS` and `SPRING_PROFILES_ACTIVE`, we can do this:
 
 ```
 $ docker run \
@@ -199,6 +199,9 @@ $ docker run \
   -e "JVM_ARGS=-Xms2G -Xmx2G" \
   -p "8080:8080" \
   mydockerhubaccount/springboot-swagger-jpa:1.0.0
+...
+2020-02-07 03:19:14.465  INFO 1 --- [main] a.Application: The following profiles are active: prod
+...
 ```
 
 > Note: 
