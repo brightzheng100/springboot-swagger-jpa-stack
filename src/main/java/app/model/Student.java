@@ -1,8 +1,7 @@
 package app.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -17,8 +16,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Table(name = "STUDENT")
 public class Student {
-	@Id @GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;				//id
-	private @NonNull String nid;	//national ID
-	private @NonNull String name;	//name
+	@Id @Column(name = "student_id")
+	private Long id;						//id
+	
+	@NonNull @Column(name = "student_nid")
+	private String nid;						//national ID
+	
+	@NonNull @Column(name = "student_name")
+	private String name;					//name
 }

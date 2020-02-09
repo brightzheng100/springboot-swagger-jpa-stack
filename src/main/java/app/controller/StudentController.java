@@ -1,5 +1,6 @@
 package app.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import app.model.Student;
@@ -46,6 +48,21 @@ public class StudentController {
 		}
 	}
 
+	@GetMapping("/query")
+	public ResponseEntity<?> findStudentByName(@RequestParam("name") String name) {
+		LOGGER.info("GET v1/students/query?name={}", name);
+
+		try {
+			List<Student> students = this.repository.findByNameContaining(name);
+			
+			return new ResponseEntity<>(students, HttpStatus.OK);
+			
+		} catch (Exception e) {
+			LOGGER.error("GET v1/students/query?name={} - ERROR: {}", name, e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	@PutMapping
 	public ResponseEntity<?> createStudent(Student student) {
 		LOGGER.info("POST v1/students/");
@@ -66,7 +83,7 @@ public class StudentController {
 
 	@GetMapping
 	public ResponseEntity<?> listAll() {
-		LOGGER.info("GET v1/students");
+		LOGGER.info("GET v1/students/");
 		
 		try {
 			Iterable<Student> all = this.repository.findAll();

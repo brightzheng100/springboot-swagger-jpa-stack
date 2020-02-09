@@ -1,0 +1,55 @@
+#
+# application-default.yml
+#
+# This is the "default" profile, when no explicit profile is specified.
+# 
+
+#
+# application.yml
+#
+# This will become the "default" profile, if no explicit profile is specified
+# And it includes the "common settings" of all other profiles for application
+# 
+
+# Path of the dispatcher servlet.
+spring:
+  profiles:
+    active: h2                              # profiles to activated, separated by comma (,)
+  jpa:
+    database: H2
+    show-sql: true
+  h2.console.enabled: true                  # enabling H2 Console: /h2-console
+  datasource:
+    platform: h2                            # database platform
+    url: jdbc:h2:mem:testdb                 # JDBC URL
+  flyway:                                   # Flyway
+    enabled: true
+    schemas:
+    - PUBLIC
+
+    
+# Actuator Configuration
+# Ref: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
+management:
+  endpoints:
+    enabled-by-default: false             # defaults it to false and expose only what you want
+    web:
+      exposure:
+        include:
+        - info
+        - health
+        - prometheus
+        - flyway
+        - loggers
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+      show-details: always
+    flyway:
+      enabled: true
+    loggers:
+      enabled: true
+    prometheus:
+      enabled: true

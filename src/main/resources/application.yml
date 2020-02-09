@@ -1,8 +1,8 @@
 #
 # application.yml
 #
-# This will become the "default" profile
-# And it includes the "common settings" of all other profiles for application
+# This will become the base profile for the "common settings"
+# All settings here may be overriden by profile-specific properties in application-{profile}.yml
 # 
 
 
@@ -10,11 +10,6 @@
 server:
   port: 8080
 
-# Path of the dispatcher servlet.
-spring:
-  mvc:
-    servlet:
-      path: /
 
 # app name and build version updated during build process from Maven properties.
 info:
@@ -22,3 +17,13 @@ info:
     name: '@project.artifactId@'
   build:
     version: '@project.version@'
+
+
+# Logging
+logging:
+  level:
+    root: ERROR                           # ERROR level at root
+    org.springframework: INFO             # INFO level for Spring
+    app: INFO                             # INFO level for application
+  pattern:
+    console: "==> [%p] %c{1}(%L) - %m%n"

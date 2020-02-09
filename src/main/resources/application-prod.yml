@@ -1,0 +1,44 @@
+#
+# application-prod.yml
+#
+# This is the "prod" profile by following the naming pattern: application-{profile}.yml
+# 
+
+
+# Spring configuration
+spring:
+  profiles:
+    active: prod                              # profiles to activated, separated by comma (,)
+    include:
+    - mysql
+  jpa:
+    database: MYSQL
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  datasource:
+    platform: mysql                           # database platform
+    driverClassName: com.mysql.cj.jdbc.Driver # JDBC Driver
+    url: jdbc:mysql://localhost:3306/testdb   # JDBC URL, change it accordingly
+    username: myuser                          # JDBC Username, change it accordingly
+    password: mypasswd                        # JDBC Password, change it accordingly
+  h2.console.enabled: false                   # enabling H2 Console: /h2-console
+  flyway:                                     # flyway
+    schemas:
+    - testdb
+
+# Actuator Configuration
+# Ref: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
+management:
+  endpoints:
+    enabled-by-default: false                 # defaults it to false and expose only what you want
+    web:
+      exposure:
+        include:
+        - health
+        - prometheus
+  endpoint:
+    health:
+      enabled: true
+    prometheus:
+      enabled: true
