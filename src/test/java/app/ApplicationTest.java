@@ -10,9 +10,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@ActiveProfiles("dev")
+@ActiveProfiles("default,h2")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class ApplicationTests {
+public class ApplicationTest {
 
 	// actuator
 	@Test
