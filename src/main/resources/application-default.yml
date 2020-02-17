@@ -18,7 +18,11 @@ spring:
   jpa:
     database: H2
     show-sql: true
-  h2.console.enabled: true                  # enabling H2 Console: /h2-console
+  h2:
+    console:
+      enabled: true                         # enabling H2 Console: /h2-console
+      settings:
+        web-allow-others: true
   datasource:
     platform: h2                            # database platform
     url: jdbc:h2:mem:testdb                 # JDBC URL

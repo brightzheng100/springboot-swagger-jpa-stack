@@ -22,7 +22,6 @@ spring:
     url: jdbc:mysql://localhost:3306/testdb   # JDBC URL, change it accordingly
     username: myuser                          # JDBC Username, change it accordingly
     password: mypasswd                        # JDBC Password, change it accordingly
-  h2.console.enabled: false                   # enabling H2 Console: /h2-console
   flyway:                                     # flyway
     schemas:
     - testdb
