@@ -250,6 +250,21 @@ Hibernate: select student0_.student_id as student_1_0_0_, student0_.student_name
 
 ![Hazelcast](misc/screenshot-hazelcast.png "Hazelcast")
 
+You may try out some other caching scenarios too to see how Hazelcast is integrated with JPA + Hibernate.
+
+For example:
+
+```sh
+# POST to create a new record
+curl -i -X POST "http://localhost:8080/api/v1/students" -H "Content-Type: application/json" --data '{"id":20001,"nid":"test","name":"test"}'
+# GET it back, without hitting the database directly!
+curl -i -X GET "http://localhost:8080/api/v1/students/20001"
+# PUT to update this record
+curl -i -X PUT "http://localhost:8080/api/v1/students" -H "Content-Type: application/json" --data '{"id":20001,"nid":"test2","name":"test2"}'
+# GET it back, again, without hitting the database directly!
+curl -X GET "http://localhost:8080/api/v1/students/20001"
+```
+
 ### Manage Hazelcast in its management console
 
 In browser, open Hazelcast's management console by navigate to: http://localhost:8090.
