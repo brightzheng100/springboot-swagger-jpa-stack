@@ -11,6 +11,7 @@ spring:
   jpa:
     properties:
       hibernate:
+        format_sql: true
         cache:
           use_query_cache: true
           use_second_level_cache: true
