@@ -1,0 +1,23 @@
+version: '3'
+services:
+  # Hazelcast 1
+  hazelcast1:
+    image: hazelcast/hazelcast:latest
+    environment:
+      - 'JAVA_OPTS=-Dhazelcast.local.publicAddress=192.168.56.1:5701'
+    ports:
+      - '5701:5701'
+
+  # Hazelcast 2
+  hazelcast2:
+    image: hazelcast/hazelcast:latest
+    environment:
+      - 'JAVA_OPTS=-Dhazelcast.local.publicAddress=192.168.56.1:5702'
+    ports:
+      - '5702:5701'
+
+  # Hazelcast Management Center
+  management-center:
+    image: hazelcast/management-center:latest
+    ports:
+      - '8090:8080'

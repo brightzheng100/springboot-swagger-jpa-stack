@@ -41,7 +41,7 @@ The major components include:
   - io.rest-assured:rest-assured
 
 
-## File Structure
+## File structure
 
 The project follows a series of conventions / best practices of Maven, Spring Boot and Flyway.
 
@@ -70,6 +70,7 @@ $ tree .
     │   │           └── StudentRepository.java
     │   └── resources
     │       ├── application-default.yml
+    │       ├── application-hazelcast.yml
     │       ├── application-prod.yml
     │       ├── application.yml
     │       ├── bootstrap.yml
@@ -85,7 +86,7 @@ $ tree .
 ```
 
 
-## Get Started
+## Get started
 
 Make sure you have Maven 3.x and JDK 1.8+ installed.
 
@@ -99,7 +100,9 @@ $ mvn -version
 Apache Maven 3.6.2 ...
 ```
 
-Then let's get started:
+### Start up the app
+
+Let's get started:
 
 ```
 $ mvn clean spring-boot:run
@@ -108,9 +111,6 @@ $ mvn clean spring-boot:run
 > Note: 
 > 1. Without specifying any profile, it will automatically fall back to `default` profile so `application.yml` and `application-default.yml` will be loaded, where `H2` embedded in-memory will be used;
 > 2. The app serves at port `8080`, as usual.
-
-
-## Play With It
 
 ### Access Swagger UI
 
@@ -125,7 +125,7 @@ $ open http://localhost:8080/swagger/index.html
 > Note: All the APIs exposed can be tried through the UI, do try it out!
 
 
-### See What Actuator Offers
+### See what Actuator offers
 
 A list out-of-the-box Actuator services have been exposed, in `dev` profile.
 
@@ -144,7 +144,7 @@ The Prometheus metrics: http://localhost:8080/actuator/prometheus
 ![actuator-prometheus](misc/screenshot-actuator-prometheus.png "Actuator prometheus")
 
 
-### Access H2 Console
+### Access H2 console
 
 Open a browser and navigate to: http://localhost:8080/h2-console
 
@@ -160,12 +160,12 @@ Click the Connect button and we can play with the database.
 ![h2-main](misc/screenshot-h2-main.png "H2 Main")
 
 
-### Run With A Specified Spring Profile
+## Run it with specified Spring Profile(s)
 
 By default, it will load `H2` as the embedded in-memory DB for devevelopment and testing purposes.
-But you may want to connect to **production**-like external DB, e.g. MySQL, without changing the code.
+But you may want to connect to **production**-like external DB, e.g. `MySQL`, without changing the code.
 
-In this case, we can specify the Spring profile where you configure the right DB backend at run time.
+In this case, we can specify the Spring profile(s) where you configure the right DB backend at run time.
 This project includes a `application-prod.yml` file, as an example, where we specify MySQL DB as our backend.
 
 Let's assume that the MySQL Server has been installed in our working machine fullfiled what we have set in `application-prod.yml` file:
@@ -192,7 +192,89 @@ $ SPRING_PROFILES_ACTIVE=prod mvn clean spring-boot:run
 > 2. The schema and data will be created automatically at first time and fully managed by `Flyway`.
 
 
-### Containerize & Run It
+## Run it with Hazelcast integrated
+
+### Start up Hazelcast cluster
+
+Let's start a Hazelcast cluster by using `docker-compose`.
+
+```sh
+IP_ADDR="192.168.56.1"      # CHANGE ME TO YOUR MACHINE'S IP ADDRESS, e.g. 192.168.56.1
+sed "s/192.168.56.1/$IP_ADDR/g" docker-compose/hazelcast.yml > docker-compose/_hazelcast.yml
+docker-compose -f docker-compose/_hazelcast.yml up
+```
+
+> Note: as per my testing, using `localhost` or `127.0.0.1` won't work properly, so make sure use a right IP.
+
+> OUTPUT:
+
+```
+...
+management-center_1  | Hazelcast Management Center successfully started at http://localhost:8080/
+management-center_1  |
+hazelcast1_1         | Jun 10, 2020 9:20:06 AM com.hazelcast.internal.cluster.ClusterService
+hazelcast1_1         | INFO: [192.168.56.1]:5701 [dev] [4.0.1]
+hazelcast1_1         |
+hazelcast1_1         | Members {size:2, ver:2} [
+hazelcast1_1         | 	Member [192.168.56.1]:5701 - ccd75619-d3c9-4612-a95d-0aa51dd6770b this
+hazelcast1_1         | 	Member [192.168.56.1]:5702 - f2603d08-a963-479c-b9d7-8b5cb7e6d2a0
+hazelcast1_1         | ]
+...
+```
+
+### Start up the app with extra `hazelcast` profile
+
+Open another console, run the app with one extra profile named `hazelcast`:
+
+```sh
+SPRING_PROFILES_ACTIVE=default,hazelcast mvn clean spring-boot:run
+```
+
+The functionalities are exactly the same but the `/api/v1/students/{id}` requests with the same id will be cached after the first request.
+
+Open the third console and let's test it out by simply using `curl`:
+
+```sh
+while sleep 1; do { echo ""; curl -X GET "http://localhost:8080/api/v1/students/10001" } done
+```
+
+> OUTPUT: you will see only first request will hit database
+
+```
+==> [INFO] StudentController(32) - GET v1/students/10001
+Hibernate: select student0_.student_id as student_1_0_0_, student0_.student_name as student_2_0_0_, student0_.student_nid as student_3_0_0_ from student student0_ where student0_.student_id=?
+==> [INFO] StudentController(32) - GET v1/students/10001
+==> [INFO] StudentController(32) - GET v1/students/10001
+...
+```
+
+![Hazelcast](misc/screenshot-hazelcast.png "Hazelcast")
+
+### Manage Hazelcast in its management console
+
+In browser, open Hazelcast's management console by navigate to: http://localhost:8090.
+
+You then can create an account, e.g.:
+- Security Provider: `Default`
+- Username: `admin`
+- Password: `Password1`
+
+Then you can use this user to log into Hazelcast's management center.
+
+In "Manage Clusters" , click "Add Cluster Config" button to add cluster, e.g.:
+- Cluster Name: `dev`
+- Cluster Config State: `Enabled`
+- Member Addresses: e.g. `192.168.56.1:5701` `192.168.56.1:5702`
+
+![Hazelcast Cluster](misc/screenshot-hazelcast-cluster.png)
+
+> Note: 
+> 1. Again, make sure to use your machine's right IP address instead of `localhost:5701` or `127.0.0.1:5701`, otherwise the newly created cluster would be in "Disconnected" state;
+> 2. Use `tab` key after keying in the the member address and you can add more member addresses.
+
+After that, you can visualize Hazelcast on the management console.
+
+## Containerize & Run It
 
 A `Dockerfile` is provided for you to containerize the app with multi-stage build in mind.
 
