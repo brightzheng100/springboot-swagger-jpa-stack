@@ -18,7 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "STUDENT")
-@Cache(region = "employeeCache", usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(region = "studentCache", usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Student {
 	@Id @Column(name = "student_id")
 	private Long id;						//id
