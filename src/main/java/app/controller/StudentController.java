@@ -8,9 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,8 +66,8 @@ public class StudentController {
 		}
 	}
 
-	@PutMapping
-	public ResponseEntity<?> createStudent(Student student) {
+	@PostMapping
+	public ResponseEntity<?> createStudent(@RequestBody Student student) {
 		LOGGER.info("POST v1/students/");
 		
 		try {
@@ -77,6 +80,43 @@ public class StudentController {
 			
 		} catch (Exception e) {
 			LOGGER.error("POST v1/students/ - ERROR: {}", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PutMapping
+	public ResponseEntity<?> updateStudent(@RequestBody Student student) {
+		LOGGER.info("PUT v1/students/");
+		
+		try {
+			Optional<Student> o = this.repository.findById(student.getId());
+			
+			if (o.isPresent()) {
+				this.repository.save(student);
+				
+				return new ResponseEntity<>(HttpStatus.OK);
+				
+			} else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+			
+		} catch (Exception e) {
+			LOGGER.error("PUT v1/students - ERROR: {}", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteStudent(@PathVariable("id") Long id) {
+		LOGGER.info("DELETE v1/students/{}", id);
+		
+		try {
+			this.repository.deleteById(id);
+			
+			return new ResponseEntity<>(HttpStatus.OK);
+			
+		} catch (Exception e) {
+			LOGGER.error("DELETE v1/students/{} - ERROR: {}", id, e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
