@@ -10,7 +10,8 @@ If you want to build RESTful APIs with DB as the backend, you may think of:
 - Using [H2](https://www.h2database.com) as an embedded database for local development and testing;
 - Using [Flyway](https://flywaydb.org/) to make database upgrades / patches as code;
 - Using [micrometer](http://micrometer.io/) to expose Prometheus-style metrics;
-- Using Spring Boot Test Framework with Junit, [Rest Assured](https://github.com/rest-assured/rest-assured) for testing.
+- Using Spring Boot Test Framework with Junit, [Rest Assured](https://github.com/rest-assured/rest-assured) for testing;
+- Optionaly, using [Hazelcast](https://hazelcast.org/) as the cache engine for some use cases, e.g. Hibernate second-level cache;
 - etc.
 
 But make all these frameworks fully integrated may take some effort.
@@ -35,6 +36,8 @@ The major components include:
   - com.h2database:h2
 - **Prometheus support with micrometer**
   - io.micrometer:micrometer-registry-prometheus
+- **Hazelcast client v4**
+  - com.hazelcast:hazelcast-spring
 - **Testing**
   - org.springframework.boot:spring-boot-starter-test
   - junit:junit
@@ -222,6 +225,8 @@ hazelcast1_1         | ]
 ...
 ```
 
+So two Hazelcast instances are up and lisening on: `192.168.56.1:5701` and `192.168.56.1:5702`.
+
 ### Start up the app with extra `hazelcast` profile
 
 Open another console, run the app with one extra profile named `hazelcast`:
@@ -267,16 +272,16 @@ curl -X GET "http://localhost:8080/api/v1/students/20001"
 
 ### Manage Hazelcast in its management console
 
-In browser, open Hazelcast's management console by navigate to: http://localhost:8090.
+In browser, navigate to Hazelcast's management console by: http://localhost:8090.
 
-You then can create an account, e.g.:
+You then can create an account, for example:
 - Security Provider: `Default`
 - Username: `admin`
 - Password: `Password1`
 
 Then you can use this user to log into Hazelcast's management center.
 
-In "Manage Clusters" , click "Add Cluster Config" button to add cluster, e.g.:
+In "Manage Clusters" , click "Add Cluster Config" button to add cluster, for example:
 - Cluster Name: `dev`
 - Cluster Config State: `Enabled`
 - Member Addresses: e.g. `192.168.56.1:5701` `192.168.56.1:5702`
@@ -288,6 +293,7 @@ In "Manage Clusters" , click "Add Cluster Config" button to add cluster, e.g.:
 > 2. Use `tab` key after keying in the the member address and you can add more member addresses.
 
 After that, you can visualize Hazelcast on the management console.
+
 
 ## Containerize & Run It
 
