@@ -173,8 +173,8 @@ This project includes a `application-prod.yml` file, as an example, where we spe
 
 Let's assume that the MySQL Server has been installed in our working machine fullfiled what we have set in `application-prod.yml` file:
 - url: `jdbc:mysql://<DB HOST>:3306/testdb`
-- username: `myuser`
-- password: `mypasswd`
+- username: `root`
+- password: `Password1`
 
 Firstly, let's log into MySQL and create the database:
 
@@ -295,12 +295,19 @@ In "Manage Clusters" , click "Add Cluster Config" button to add cluster, for exa
 After that, you can visualize Hazelcast on the management console.
 
 
-## Containerize & Run It
+## Containerize It
 
 A `Dockerfile` is provided for you to containerize the app with multi-stage build in mind.
 
 ```sh
-$ docker build -t mydockerhubaccount/springboot-swagger-jpa .
+# Define how to tag your image
+$ export registry_namespace=<YOUR REGISTRY WITH NAMESPACE, e.g. docker.io/brightzheng100>
+
+# Build it
+$ docker build -t ${registry_namespace}/springboot-swagger-jpa-stack .
+
+# Optionally, push it to the Docker Registry
+$ docker push ${registry_namespace}/springboot-swagger-jpa-stack
 ```
 
 There are a couple of build args provided, with defaults:
@@ -318,7 +325,7 @@ For example, if we want to build the Image tagged as:
 $ docker build \
   --build-arg ARTIFACT_TITLE="my-app" \
   --build-arg ARTIFACT_VERSION="1.0.0" \
-  -t mydockerhubaccount/springboot-swagger-jpa:1.0.0 .
+  -t ${registry_namespace}/springboot-swagger-jpa-stack:1.0.0 .
 ```
 
 Meanwhile, there are also env variables for run time:
@@ -337,7 +344,7 @@ $ docker run \
   -e "SPRING_PROFILES_ACTIVE=prod" \
   -e 'SPRING_DATASOURCE_URL=jdbc:mysql://192.168.1.148:3306/testdb' \
   -p "8080:8080" \
-  mydockerhubaccount/springboot-swagger-jpa:1.0.0
+  ${registry_namespace}/springboot-swagger-jpa-stack:1.0.0
 ...
 ==> [INFO] Application(655) - The following profiles are active: prod,mysql
 ...
@@ -348,12 +355,22 @@ $ docker run \
 > Note: 
 > 1. The MySQL IP of `192.168.1.148` is my laptop's IP, change it accordingly to yours;
 > 2. You may inject more Spring variables, if there is a need, to override the default values;
-> 3. Change the **`mydockerhubaccount`** to yours, or use your image naming pattern instead.
 
+
+## Deploy it to Kubernetes / OpenShit
+
+```sh
+# Define where to look for your Docker image, or you can simply use mine
+$ export registry_namespace=docker.io/brightzheng100
+
+# Deploy it to your desired namespace, say demo here, with a MySQL db
+$ kubectl create namespace demo
+$ kubectl apply -f kubernetes/mysql.yaml -n demo
+$ envsubst < kubernetes/app.yaml | kubectl apply -f - -n demo
+```
 
 ## References
 
 - Spring Boot with Docker: https://spring.io/guides/gs/spring-boot-docker/
 - Spring Data JPA Doc: https://docs.spring.io/spring-data/jpa/docs/2.2.4.RELEASE/reference/html/#jpa.query-methods.query-creation
 - Some Dockerfile experience: https://github.com/appsody/stacks/tree/master/incubator/java-spring-boot2
-
