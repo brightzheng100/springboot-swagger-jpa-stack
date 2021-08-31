@@ -32,6 +32,8 @@ spring:
     enabled: true
     schemas:
     - PUBLIC
+  jmx:
+    enabled: true
 
     
 # Actuator Configuration
@@ -59,3 +61,8 @@ management:
       enabled: true
     prometheus:
       enabled: true
+    metrics:
+      enabled: true
+    env:
+      enabled: true
+      

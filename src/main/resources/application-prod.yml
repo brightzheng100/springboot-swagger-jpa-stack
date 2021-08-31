@@ -19,12 +19,14 @@ spring:
   datasource:
     platform: mysql                           # database platform
     driverClassName: com.mysql.cj.jdbc.Driver # JDBC Driver
-    url: jdbc:mysql://localhost:3306/testdb   # JDBC URL, change it accordingly
-    username: myuser                          # JDBC Username, change it accordingly
-    password: mypasswd                        # JDBC Password, change it accordingly
+    url: jdbc:mysql://mysql:3306/testdb       # JDBC URL, e.g. jdbc:mysql://localhost:3306/testdb
+    username: myuser                          # JDBC Username
+    password: mypassword                      # JDBC Password
   flyway:                                     # flyway
     schemas:
     - testdb
+  jmx:
+    enabled: true
 
 # Actuator Configuration
 # Ref: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
@@ -37,7 +39,18 @@ management:
         - health
         - prometheus
   endpoint:
+    info:
+      enabled: true
     health:
       enabled: true
+      show-details: always
+    flyway:
+      enabled: true
+    loggers:
+      enabled: true
     prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+    env:
       enabled: true
