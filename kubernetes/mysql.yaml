@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql
+data:
+  db_password: bXlwYXNzd29yZA==     # mypassword
+  db_username: bXl1c2Vy             # myuser
+  root_password: bXlwYXNzd29yZA==   # mypassword
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: mysql
+    tier: db
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+      tier: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+        tier: db
+    spec:
+      containers:
+      - image: mysql:5.7
+        name: mysql
+        # Ref: https://hub.docker.com/_/mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: root_password
+        - name: MYSQL_DATABASE
+          value: testdb
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: db_username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: db_password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql
+        persistentVolumeClaim:
+          claimName: mysql
