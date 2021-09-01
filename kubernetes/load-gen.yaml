@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: load-gen
+  labels:
+    app: load-gen
+spec:
+  containers:
+    - name: load-gen
+      image: brightzheng100/springboot-swagger-jpa-stack-load-gen
+      args:
+        - "http://springboot-swagger-jpa-stack:8080"

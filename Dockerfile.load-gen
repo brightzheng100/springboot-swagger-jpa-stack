@@ -1,0 +1,8 @@
+FROM alpine:latest
+
+RUN apk --no-cache add curl \
+      && rm -rf /var/cache/apk/*
+
+COPY ./load-gen.sh /
+
+ENTRYPOINT ["sh", "/load-gen.sh"]

@@ -4,7 +4,8 @@
 # Typical Usage:
 # 
 # 1. Port forward
-#   kubectl port-forward -n demo springboot-swagger-jpa-stack-668d8d5d56-96jrt 8080:8080
+#   pod=`kubectl -n labs get pod -l app=springboot-swagger-jpa-stack -o json | jq -r ".items[0].metadata.name"`
+#   kubectl port-forward -n labs $pod 8080:8080
 # 
 #
 
