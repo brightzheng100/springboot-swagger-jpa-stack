@@ -22,14 +22,13 @@ There is also a bonus: a workable `Dockerfile` which supports multi-stage!
 
 The major components include:
 
-- **Spring Boot v2.2.x**
+- **Spring Boot v2.5.x**
   - org.springframework.boot:spring-boot-starter-web
   - org.springframework.boot:spring-boot-starter-data-jpa
   - org.springframework.boot:spring-boot-starter-log4j2
   - org.springframework.boot:spring-boot-starter-actuator
-- **Swagger v2.9.x**
-  - io.springfox:springfox-swagger2
-  - io.springfox:springfox-swagger-ui
+- **Swagger v3.0.x**
+  - io.springfox:springfox-boot-starter
 - **Flyway v6.0.x**
   - org.flywaydb:flyway-core
 - **H2 v1.4.x**
@@ -117,15 +116,17 @@ $ mvn clean spring-boot:run
 
 ### Access Swagger UI
 
-Open a browser and navigate to: http://localhost:8080/swagger-ui.html
+Open a browser and navigate to: http://localhost:8080/
 
 ```sh
-$ open http://localhost:8080/swagger/index.html
+$ open http://localhost:8080/
 ```
 
 ![swagger-ui](misc/screenshot-swagger.png "Swagger UI")
 
-> Note: All the APIs exposed can be tried through the UI, do try it out!
+> Note: 
+> 1. Note the `/` URI will be automatically redirected to Swagger UI: in v2.x it's at `/swagger-ui.html`; while in v3.x, it's at `/swagger-ui/index.html`;
+> 2. All the APIs exposed can be tried through the UI, do try it out!
 
 
 ### See what Actuator offers
@@ -174,7 +175,7 @@ This project includes a `application-prod.yml` file, as an example, where we spe
 Let's assume that the MySQL Server has been installed in our working machine fullfiled what we have set in `application-prod.yml` file:
 - url: `jdbc:mysql://<DB HOST>:3306/testdb`
 - username: `root`
-- password: `Password1`
+- password: `<DB PASSWORD>`
 
 Firstly, let's log into MySQL and create the database:
 

@@ -6,7 +6,7 @@
     <parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.4.RELEASE</version>
+		<version>2.5.4</version>
 		<relativePath />
 	</parent>
 
@@ -24,7 +24,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- project related properties -->
-		<springfox-swagger>2.9.2</springfox-swagger>
+		<springfox-swagger>3.0.0</springfox-swagger>
 		<rest-assured>4.2.0</rest-assured>
 		<!-- Hazelcast -->
 		<hazelcast.version>4.0</hazelcast.version>
@@ -56,14 +56,9 @@
 
 		<!-- Swagger -->
 		<dependency>
-		    <groupId>io.springfox</groupId>
-		    <artifactId>springfox-swagger2</artifactId>
-		    <version>${springfox-swagger}</version>
-		</dependency>
-		<dependency>
 			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>${springfox-swagger}</version>
+	        <artifactId>springfox-boot-starter</artifactId>
+	        <version>${springfox-swagger}</version>
 		</dependency>
 		
 		<!-- Flyway -->

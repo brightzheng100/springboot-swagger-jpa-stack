@@ -13,10 +13,15 @@
 
 # Path of the dispatcher servlet.
 spring:
-  profiles:
-    active: h2                              # profiles to activated, separated by comma (,)
-    include:
-    - h2
+  # There is a significant change from v2.4+
+  # Refer to: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-Config-Data-Migration-Guide#profile-activation
+  #profiles:
+  #  active: default,h2                     # profiles to activated, separated by comma (,)
+  #  include:
+  #  - h2
+  config:
+    activate:
+      on-profile: "default"
   jpa:
     database: H2
     show-sql: true
@@ -35,7 +40,6 @@ spring:
   jmx:
     enabled: true
 
-    
 # Actuator Configuration
 # Ref: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
 management:
@@ -65,4 +69,4 @@ management:
       enabled: true
     env:
       enabled: true
-      
+

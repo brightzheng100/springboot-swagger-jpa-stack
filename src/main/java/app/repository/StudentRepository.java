@@ -2,14 +2,12 @@ package app.repository;
 
 import java.util.List;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import app.model.Student;
 
 @Repository
-@Profile({"h2", "mysql"}) // the db profiles
 public interface StudentRepository extends CrudRepository<Student, Long> {
 	
 	//For more custom JPA methods, refer to JPA doc for the method naming conversions
