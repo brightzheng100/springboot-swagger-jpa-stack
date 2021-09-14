@@ -169,26 +169,26 @@ Click the Connect button and we can play with the database.
 By default, it will load `H2` as the embedded in-memory DB for devevelopment and testing purposes.
 But you may want to connect to **production**-like external DB, e.g. `MySQL`, without changing the code.
 
-In this case, we can specify the Spring profile(s) where you configure the right DB backend at run time.
-This project includes a `application-prod.yml` file, as an example, where we specify MySQL DB as our backend.
-
-Let's assume that the MySQL Server has been installed in our working machine fullfiled what we have set in `application-prod.yml` file:
-- url: `jdbc:mysql://<DB HOST>:3306/testdb`
-- username: `root`
-- password: `<DB PASSWORD>`
-
-Firstly, let's log into MySQL and create the database:
+Firstly, let's log into MySQL and create the database, user with proper permissions:
 
 ```sh
-$ mysql -u root -p
+$ mysql -u root -p  # or sudo mysql in v8
 
-$ mysql> create database testdb;
+mysql> CREATE USER 'myuser'@'%' IDENTIFIED BY 'mypassword';
+mysql> CREATE DATABASE testdb;
+mysql> GRANT ALL PRIVILEGES ON testdb.* TO 'myuser'@'%'; # note, we may grant more granular permissions here
+mysql> FLUSH PRIVILEGES;
 ```
 
-And then open another console to start the application:
+And then we can activate the right Spring profile(s), e.g. `application-prod.yml` with necessary env variables specified:
 
 ```sh
-$ SPRING_PROFILES_ACTIVE=prod mvn clean spring-boot:run
+# Change the values that make sense to your env
+$ SPRING_DATASOURCE_URL="jdbc:mysql://<DB HOST>:3306/testdb" \
+  SPRING_DATASOURCE_USER="myuser" \
+  SPRING_DATASOURCE_PASSWORD="mypassword" \
+  SPRING_PROFILES_ACTIVE=prod \
+  mvn clean spring-boot:run
 ```
 
 > Note: 
@@ -361,13 +361,22 @@ $ docker run \
 ## Deploy it to Kubernetes / OpenShit
 
 ```sh
-# Define where to look for your Docker image, or you can simply use mine
+# Define where to look up for your Docker image, or you can simply use mine
 $ export registry_namespace=docker.io/brightzheng100
+# The database URL, which in our case is also within K8s/OCP, but it can be external too
+$ export datasource_url=jdbc:mysql://mysql:3306/testdb
 
 # Deploy it to your desired namespace, say demo here, with a MySQL db
 $ kubectl create namespace demo
+$ kubectl apply -f kubernetes/secret.yaml -n demo
 $ kubectl apply -f kubernetes/mysql.yaml -n demo
 $ envsubst < kubernetes/app.yaml | kubectl apply -f - -n demo
+```
+
+I've provided a simple `load-gen` tool too which will keep accessing some RESTful APIs:
+
+```sh
+$ kubectl apply -f kubernetes/load-gen.yaml -n demo
 ```
 
 ## References

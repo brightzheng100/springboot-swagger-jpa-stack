@@ -1,13 +1,4 @@
 apiVersion: v1
-kind: Secret
-metadata:
-  name: mysql
-data:
-  db_password: bXlwYXNzd29yZA==     # mypassword
-  db_username: bXl1c2Vy             # myuser
-  root_password: bXlwYXNzd29yZA==   # mypassword
----
-apiVersion: v1
 kind: Service
 metadata:
   name: mysql

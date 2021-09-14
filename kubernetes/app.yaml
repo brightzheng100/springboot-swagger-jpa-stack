@@ -46,6 +46,8 @@ spec:
               value: -Xms512m -Xmx1G
             - name: SPRING_PROFILES_ACTIVE
               value: prod
+            - name: SPRING_DATASOURCE_URL
+              value: ${datasource_url}
             - name: SPRING_DATASOURCE_USER
               valueFrom:
                 secretKeyRef:

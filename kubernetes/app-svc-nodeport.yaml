@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: springboot-swagger-jpa-stack
+  labels:
+    app: springboot-swagger-jpa-stack
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+  selector:
+    app: springboot-swagger-jpa-stack
+  type: NodePort
