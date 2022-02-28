@@ -21,18 +21,27 @@ import org.springframework.web.bind.annotation.RestController;
 import app.model.Student;
 import app.repository.StudentRepository;
 
+import com.instana.sdk.annotation.Span;
+import com.instana.sdk.support.SpanSupport;
+
 @RestController
 @RequestMapping("/api/v1/students")
 public class StudentController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StudentController.class);
+	private final String SPAN_NAME = "student-service";
 	
 	@Autowired
 	StudentRepository repository;
 
 	@GetMapping("/{id}")
+	@Span(type = Span.Type.ENTRY, value = SPAN_NAME)
 	public ResponseEntity<?> findStudentById(@PathVariable("id") Long id) {
 		LOGGER.info("GET v1/students/{}", id);
+		SpanSupport.annotate("tags.service", "GET /students/{student_id}");
+		SpanSupport.annotate("tags.endpoint", "GET /students/{student_id}");
+		SpanSupport.annotate("tags.call.name", "GET /students/" + id);
+		SpanSupport.annotate("params.student_id", String.valueOf(id));
 
 		try {
 			Optional<Student> student = this.repository.findById(id);

@@ -73,3 +73,6 @@ buildNumber.properties
 # idea
 .idea/
 *.iml
+
+# vscode
+.vscode/
