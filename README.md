@@ -358,7 +358,7 @@ $ docker run \
 > 2. You may inject more Spring variables, if there is a need, to override the default values;
 
 
-## Deploy it to Kubernetes / OpenShit
+## Deploy it to Kubernetes / OpenShift
 
 ```sh
 # Define where to look up for your Docker image, or you can simply use mine
@@ -378,6 +378,47 @@ I've provided a simple `load-gen` tool too which will keep accessing some RESTfu
 ```sh
 $ kubectl apply -f kubernetes/load-gen.yaml -n demo
 ```
+
+## OpenTelemetry Experiments
+
+1. Download and start the `otelcol` tool for testing purposes:
+
+```sh
+# Download the right otelcol binnary
+wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.69.0/otelcol_0.69.0_darwin_arm64.tar.gz
+tar -xvf otelcol_0.69.0_darwin_arm64.tar.gz
+
+./otelcol -v
+otelcol version 0.69.0
+
+# Start it up
+./otelcol --config otel-collector.yaml
+```
+
+2. Open a new console, download the OpenTelemetry's Java agent, and start it with the agent:
+
+```sh
+wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
+
+export OTEL_TRACES_EXPORTER=otlp
+export OTEL_METRICS_EXPORTER=otlp
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:55690
+
+mvn clean spring-boot:run \
+  -Dspring-boot.run.profiles=otel \
+  -Dspring-boot.run.jvmArguments="-javaagent:`pwd`/opentelemetry-javaagent.jar"
+```
+
+3. Open your browse and navigate to: http://localhost:8080/
+
+You may try any of the APIs, say this one: http://localhost:8080/swagger-ui/index.html#/student-controller/listAllUsingGET, and you will see a lot of detailed info from both `otelcol` and app's console.
+Most importantly, in `otelcol`'s console, we can see metrics, tracing and log exporters are working; and in our app's console, you will see the Log4j has been auto instrumented, and every log entity has injected `traceId` and `spanId` values, without any code changes, like this:
+
+```log
+==> [INFO] StudentController(126) - traceId: a96a7a05c15c85316d43b74ccab1f743 spanId: 8b1657394e900aa4 - GET v1/students/
+```
+
+It would be even cooler if we export all this observability data to an observability platform like [Instana](https://instana.com).
 
 ## References
 

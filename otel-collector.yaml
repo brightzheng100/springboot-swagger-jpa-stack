@@ -1,0 +1,26 @@
+receivers:
+  otlp/2:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:55690
+      http:
+processors:
+
+exporters:
+  logging:
+    verbosity: detailed # detailed|normal|basic)
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp/2]
+      processors: []
+      exporters: [logging]
+    metrics:
+      receivers: [otlp/2]
+      processors: []
+      exporters: [logging]
+    logs:
+      receivers: [otlp/2]
+      processors: []
+      exporters: [logging]
