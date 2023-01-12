@@ -381,6 +381,34 @@ $ kubectl apply -f kubernetes/load-gen.yaml -n demo
 
 ## OpenTelemetry Experiments
 
+What I'd experiment is the automatic instrumentation offered by OpenTelemetry's sub project named [`opentelemetry-java-instrumentation`](https://github.com/open-telemetry/).
+
+There are a few things should be highlighed:
+- For metrics and tracing, simply adding the `-javaagent:<path-to>/opentelemetry-javaagent.jar` will just work;
+- For logging, where the support is still in early days, there is a way to auto instrument polular logging frameworks like [Log4j](https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/86961d496ade8a1876e9548af9c391a0645ce649/instrumentation/log4j/log4j-2.13.2/library/README.md), among others.
+
+We don't need to do things very specificially for metrics and tracing, but we need to add some more dependencies for logging.
+And as of now, what I've added are:
+```xml
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-spring-boot</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-log4j-2.13.2</artifactId>
+			<version>1.9.2-alpha</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-api</artifactId>
+			<version>1.16.0</version>
+		</dependency>
+```
+
+Now, let's try it out step by step:
+
 1. Download and start the `otelcol` tool for testing purposes:
 
 ```sh
@@ -419,6 +447,7 @@ Most importantly, in `otelcol`'s console, we can see metrics, tracing and log ex
 ```
 
 It would be even cooler if we export all this observability data to an observability platform like [Instana](https://instana.com).
+Please refer to [README-OTEL-INSTANA](README-OTEL-INSTANA.md) for the detailed experiments.
 
 ## References
 
