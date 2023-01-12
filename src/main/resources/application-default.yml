@@ -3,7 +3,6 @@
 #
 # This is the "default" profile, when no explicit profile is specified.
 # 
-
 #
 # application.yml
 #
@@ -21,7 +20,7 @@ spring:
   #  - h2
   config:
     activate:
-      on-profile: "default"
+      on-profile: "default, otel"
   jpa:
     database: H2
     show-sql: true

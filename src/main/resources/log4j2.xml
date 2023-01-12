@@ -1,0 +1,28 @@
+<Configuration status="WARN" monitorInterval="5">
+
+    <Appenders>
+        <SpringProfile name="default | hazelcast | prod">
+            <Console name="ConsoleAppender" target="SYSTEM_OUT">
+                <PatternLayout pattern="==> [%p] %c{1}(%L) - %m%n"/>
+            </Console>
+        </SpringProfile>
+        <SpringProfile name="otel">
+            <Console name="ConsoleAppender" target="SYSTEM_OUT">
+                <PatternLayout pattern="==> [%p] %c{1}(%L) - traceId: %X{trace_id} spanId: %X{span_id} - %msg%n"/>
+            </Console>
+        </SpringProfile>
+    </Appenders>
+
+  <Loggers>
+        <Logger name="org.springframework" level="info" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+        <Logger name="app" level="debug" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Root>
+  </Loggers>
+
+</Configuration>

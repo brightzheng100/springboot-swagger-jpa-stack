@@ -17,13 +17,3 @@ info:
     name: '@project.artifactId@'
   build:
     version: '@project.version@'
-
-
-# Logging
-logging:
-  level:
-    root: ERROR                           # ERROR level at root
-    org.springframework: INFO             # INFO level for Spring
-    app: INFO                             # INFO level for application
-  pattern:
-    console: "==> [%p] %c{1}(%L) - %m%n"
