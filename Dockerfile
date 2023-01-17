@@ -36,7 +36,8 @@ RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 
 #### BUILD STAGE
-FROM adoptopenjdk:11-jdk-openj9
+#FROM adoptopenjdk:11-jdk-openj9
+FROM eclipse-temurin:11
 
 # Build args
 ARG ARTIFACT_TITLE=springboot-swagger-jpa-stack
@@ -76,7 +77,7 @@ EXPOSE 8443
 
 # Prepare and set the entry point
 RUN echo '#!/bin/sh' > start.sh \
-    && echo "exec java \$JVM_ARGS -cp /app:/app/lib/* -Djava.security.egd=file:/dev/./urandom \\" >> start.sh \
+    && echo "exec java \${JVM_ARGS} \${JAVA_TOOL_OPTIONS} -cp /app:/app/lib/* -Djava.security.egd=file:/dev/./urandom \\" >> start.sh \
     && cat /app/META-INF/MANIFEST.MF | grep 'Start-Class: ' | cut -d' ' -f2 | tr -d '\r\n' >> start.sh \
     && echo "" >> start.sh \
     && cat start.sh \
