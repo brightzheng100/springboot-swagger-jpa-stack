@@ -1,13 +1,9 @@
 #
-# application-default.yml
+# application-otel.yml
 #
-# This is the "default" profile, when no explicit profile is specified.
+# This is identical to the "default" profile.
 # 
 #
-# application.yml
-#
-# This will become the "default" profile, if no explicit profile is specified
-# And it includes the "common settings" of all other profiles for application
 # 
 
 # Path of the dispatcher servlet.
@@ -20,7 +16,7 @@ spring:
   #  - h2
   config:
     activate:
-      on-profile: "default"
+      on-profile: "otel"
   jpa:
     database: H2
     show-sql: true

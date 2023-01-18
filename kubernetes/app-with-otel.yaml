@@ -1,0 +1,72 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: springboot-swagger-jpa-stack
+  labels:
+    app: springboot-swagger-jpa-stack
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+  selector:
+    app: springboot-swagger-jpa-stack
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-swagger-jpa-stack
+  labels:
+    app: springboot-swagger-jpa-stack
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 1
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: springboot-swagger-jpa-stack
+  template:
+    metadata:
+      labels:
+        app: springboot-swagger-jpa-stack
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"  # newly added for auto instrumentatioin support
+    spec:
+      containers:
+        - name: springboot-swagger-jpa-stack
+          image: ${IMAGE_NAMESPACE}/${IMAGE_APP}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: JVM_ARGS
+              value: -Xms512m -Xmx1G
+            - name: SPRING_PROFILES_ACTIVE
+              value: otel
+            - name: SPRING_DATASOURCE_URL
+              value: ${DATASOURCE_URL}
+            - name: SPRING_DATASOURCE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: db_username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: db_password
+          resources:
+            limits:
+              cpu: 800m
+              memory: 2048Mi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
