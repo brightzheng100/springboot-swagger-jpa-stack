@@ -45,7 +45,7 @@ spec:
         tier: db
     spec:
       containers:
-      - image: mysql:5.7
+      - image: ${IMAGE_MYSQL}
         name: mysql
         # Ref: https://hub.docker.com/_/mysql
         env:

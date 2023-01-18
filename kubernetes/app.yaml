@@ -36,7 +36,7 @@ spec:
     spec:
       containers:
         - name: springboot-swagger-jpa-stack
-          image: ${registry_namespace}/springboot-swagger-jpa-stack:latest
+          image: ${IMAGE_NAMESPACE}/${IMAGE_APP}
           ports:
             - name: http
               containerPort: 8080
@@ -47,7 +47,7 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               value: prod
             - name: SPRING_DATASOURCE_URL
-              value: ${datasource_url}
+              value: ${DATASOURCE_URL}
             - name: SPRING_DATASOURCE_USER
               valueFrom:
                 secretKeyRef:
