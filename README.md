@@ -47,47 +47,6 @@ The major components include:
 
 The project follows a series of conventions / best practices of Maven, Spring Boot and Flyway.
 
-```
-$ tree .
-.
-├── Dockerfile
-├── LICENSE
-├── README.md
-├── pom.xml
-└── src
-    ├── main
-    │   ├── java
-    │   │   └── app
-    │   │       ├── Application.java
-    │   │       ├── config
-    │   │       │   └── SwaggerConfig.java
-    │   │       ├── controller
-    │   │       │   ├── DefaultController.java
-    │   │       │   ├── GreetingController.java
-    │   │       │   └── StudentController.java
-    │   │       ├── model
-    │   │       │   ├── Greeting.java
-    │   │       │   └── Student.java
-    │   │       └── repository
-    │   │           └── StudentRepository.java
-    │   └── resources
-    │       ├── application-default.yml
-    │       ├── application-hazelcast.yml
-    │       ├── application-prod.yml
-    │       ├── application.yml
-    │       ├── bootstrap.yml
-    │       └── db
-    │           └── migration
-    │               ├── V1.0.0__initial.sql
-    │               ├── V1.0.1__add_person.sql
-    │               └── V1.0.2__alter_student.sql
-    └── test
-        └── java
-            └── app
-                └── ApplicationTests.java
-```
-
-
 ## Get started
 
 Make sure you have Maven 3.x and JDK 1.8+ installed.
@@ -166,10 +125,16 @@ Click the Connect button and we can play with the database.
 
 ## Run it with specified Spring Profile(s)
 
-By default, it will load `H2` as the embedded in-memory DB for devevelopment and testing purposes.
-But you may want to connect to **production**-like external DB, e.g. `MySQL`, without changing the code.
+Somehow, the Spring Boot profiles evolve to something quite difficult to understand.
 
-Firstly, let's log into MySQL and create the database, user with proper permissions:
+When no profile is specified while running by `mvn clean spring-boot:run`, it fallbacks to a so-called "default" profile in `application.yml` or `application-default.yml`.
+In our case, as we specify the "default" group in `application.yaml`, it will eventually load two profiles: `default` and `h2`.
+
+There is a flexible way to combine some of the profiles.
+
+For example, if you want to connect to **production**-like external DB, e.g. `MySQL`, without changing the code, do two things:
+
+Firstly, let's log into the MySQL and create the database, user with proper permissions:
 
 ```sh
 $ mysql -u root -p  # or sudo mysql in v8
@@ -180,20 +145,18 @@ mysql> GRANT ALL PRIVILEGES ON testdb.* TO 'myuser'@'%'; # note, we may grant mo
 mysql> FLUSH PRIVILEGES;
 ```
 
-And then we can activate the right Spring profile(s), e.g. `application-prod.yml` with necessary env variables specified:
+And then we can activate the right Spring profile(s), say `prod,mysql`, with necessary env variables specified:
 
 ```sh
 # Change the values that make sense to your env
 $ SPRING_DATASOURCE_URL="jdbc:mysql://<DB HOST>:3306/testdb" \
   SPRING_DATASOURCE_USER="myuser" \
   SPRING_DATASOURCE_PASSWORD="mypassword" \
-  SPRING_PROFILES_ACTIVE=prod \
+  SPRING_PROFILES_ACTIVE=prod,mysql \
   mvn clean spring-boot:run
 ```
 
-> Note: 
-> 1. The application will automatically activate `prod` and `mysql` profiles where MySQL will be used;
-> 2. The schema and data will be created automatically at first time and fully managed by `Flyway`.
+As a result, `application-prod.yml` and `application-h2.yml` will be loaded to make it a combined setup.
 
 
 ## Run it with Hazelcast integrated
@@ -302,13 +265,18 @@ A `Dockerfile` is provided for you to containerize the app with multi-stage buil
 
 ```sh
 # Define how to tag your image
-$ export registry_namespace=<YOUR REGISTRY WITH NAMESPACE, e.g. docker.io/brightzheng100>
+$ export IMAGE_NAMESPACE=<YOUR REGISTRY WITH NAMESPACE, e.g. docker.io/brightzheng100>
+
+# For X84_64 or amd64, use "latest" for simplicity purposes
+$ export IMAGE_TAG=latest
+# For arm64, use a dedicated tag "arm64"
+$ export IMAGE_TAG=arm64
 
 # Build it
-$ docker build -t ${registry_namespace}/springboot-swagger-jpa-stack .
+$ docker build -t ${IMAGE_NAMESPACE}/springboot-swagger-jpa-stack:${IMAGE_TAG} .
 
 # Optionally, push it to the Docker Registry
-$ docker push ${registry_namespace}/springboot-swagger-jpa-stack
+$ docker push ${IMAGE_NAMESPACE}/springboot-swagger-jpa-stack:${IMAGE_TAG}
 ```
 
 There are a couple of build args provided, with defaults:
@@ -326,7 +294,7 @@ For example, if we want to build the Image tagged as:
 $ docker build \
   --build-arg ARTIFACT_TITLE="my-app" \
   --build-arg ARTIFACT_VERSION="1.0.0" \
-  -t ${registry_namespace}/springboot-swagger-jpa-stack:1.0.0 .
+  -t ${IMAGE_NAMESPACE}/springboot-swagger-jpa-stack:${IMAGE_TAG} .
 ```
 
 Meanwhile, there are also env variables for run time:
@@ -342,10 +310,10 @@ So to run it with Docker's ENV `JVM_ARGS` and Spring variables `SPRING_PROFILES_
 ```
 $ docker run \
   -e "JVM_ARGS=-Xms2G -Xmx2G" \
-  -e "SPRING_PROFILES_ACTIVE=prod" \
+  -e "SPRING_PROFILES_ACTIVE=prod,mysql" \
   -e 'SPRING_DATASOURCE_URL=jdbc:mysql://192.168.1.148:3306/testdb' \
   -p "8080:8080" \
-  ${registry_namespace}/springboot-swagger-jpa-stack:1.0.0
+  ${IMAGE_NAMESPACE}/springboot-swagger-jpa-stack:${IMAGE_TAG}
 ...
 ==> [INFO] Application(655) - The following profiles are active: prod,mysql
 ...
@@ -362,14 +330,19 @@ $ docker run \
 
 ```sh
 # Define where to look up for your Docker image, or you can simply use mine
-$ export registry_namespace=docker.io/brightzheng100
+$ export IMAGE_NAMESPACE=docker.io/brightzheng100
 # The database URL, which in our case is also within K8s/OCP, but it can be external too
-$ export datasource_url=jdbc:mysql://mysql:3306/testdb
+$ export DATASOURCE_URL=jdbc:mysql://mysql:3306/testdb
+# Export the right images for the right CPU arch
+# For x86_64 or amd64
+$ export IMAGE_MYSQL=mysql:5.7 && export IMAGE_APP=springboot-swagger-jpa-stack:latest
+# For ARM64
+$ export IMAGE_MYSQL=arm64v8/mysql && export IMAGE_APP=springboot-swagger-jpa-stack:arm64
 
 # Deploy it to your desired namespace, say demo here, with a MySQL db
 $ kubectl create namespace demo
 $ kubectl apply -f kubernetes/secret.yaml -n demo
-$ kubectl apply -f kubernetes/mysql.yaml -n demo
+$ envsubst < kubernetes/mysql.yaml | kubectl apply -f - -n demo
 $ envsubst < kubernetes/app.yaml | kubectl apply -f - -n demo
 ```
 
@@ -381,73 +354,8 @@ $ kubectl apply -f kubernetes/load-gen.yaml -n demo
 
 ## OpenTelemetry Experiments
 
-What I'd experiment is the automatic instrumentation offered by OpenTelemetry's sub project named [`opentelemetry-java-instrumentation`](https://github.com/open-telemetry/).
+Please refer to [OpenTelemetry Experiments](./README-OTEL.md).
 
-There are a few things should be highlighed:
-- For metrics and tracing, simply adding the `-javaagent:<path-to>/opentelemetry-javaagent.jar` will just work;
-- For logging, where the support is still in early days, there is a way to auto instrument polular logging frameworks like [Log4j](https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/86961d496ade8a1876e9548af9c391a0645ce649/instrumentation/log4j/log4j-2.13.2/library/README.md), among others.
-
-We don't need to do things very specificially for metrics and tracing, but we need to add some more dependencies for logging.
-And as of now, what I've added are:
-```xml
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-spring-boot</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry.instrumentation</groupId>
-			<artifactId>opentelemetry-log4j-2.13.2</artifactId>
-			<version>1.9.2-alpha</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-api</artifactId>
-			<version>1.16.0</version>
-		</dependency>
-```
-
-Now, let's try it out step by step:
-
-1. Download and start the `otelcol` tool for testing purposes:
-
-```sh
-# Download the right otelcol binnary
-wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.69.0/otelcol_0.69.0_darwin_arm64.tar.gz
-tar -xvf otelcol_0.69.0_darwin_arm64.tar.gz
-
-./otelcol -v
-otelcol version 0.69.0
-
-# Start it up
-./otelcol --config otel-collector.yaml
-```
-
-2. Open a new console, download the OpenTelemetry's Java agent, and start it with the agent:
-
-```sh
-wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
-
-export OTEL_TRACES_EXPORTER=otlp
-export OTEL_METRICS_EXPORTER=otlp
-export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:55690
-
-mvn clean spring-boot:run \
-  -Dspring-boot.run.profiles=otel \
-  -Dspring-boot.run.jvmArguments="-javaagent:`pwd`/opentelemetry-javaagent.jar"
-```
-
-3. Open your browse and navigate to: http://localhost:8080/
-
-You may try any of the APIs, say this one: http://localhost:8080/swagger-ui/index.html#/student-controller/listAllUsingGET, and you will see a lot of detailed info from both `otelcol` and app's console.
-Most importantly, in `otelcol`'s console, we can see metrics, tracing and log exporters are working; and in our app's console, you will see the Log4j has been auto instrumented, and every log entity has injected `traceId` and `spanId` values, without any code changes, like this:
-
-```log
-==> [INFO] StudentController(126) - traceId: a96a7a05c15c85316d43b74ccab1f743 spanId: 8b1657394e900aa4 - GET v1/students/
-```
-
-It would be even cooler if we export all this observability data to an observability platform like [Instana](https://instana.com).
-Please refer to [README-OTEL-INSTANA](README-OTEL-INSTANA.md) for the detailed experiments.
 
 ## References
 
