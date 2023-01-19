@@ -47,7 +47,7 @@ spec:
             - name: JVM_ARGS
               value: -Xms512m -Xmx1G
             - name: SPRING_PROFILES_ACTIVE
-              value: otel
+              value: prod,otel,mysql
             - name: SPRING_DATASOURCE_URL
               value: ${DATASOURCE_URL}
             - name: SPRING_DATASOURCE_USER
