@@ -1,15 +1,31 @@
 #
 # application.yml
 #
-# This will become the base profile for the "common settings"
+# The is the "default" profile.
+# When no profile is specified, it will be loaded by default.
+#
 # All settings here may be overriden by profile-specific properties in application-{profile}.yml
 # 
 
+spring:
+  # There is a significant change from v2.4+
+  # Refer to: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-Config-Data-Migration-Guide#profile-activation
+  # profiles:
+  #  active: default,h2                     # profiles to activated, separated by comma (,)
+  #  include:
+  #  - h2
+  # config:
+  #   activate:
+  #     on-profile: "default"
+  profiles:
+    group:
+      "default": "h2"
+  jmx:
+    enabled: true
 
 # Server settings
 server:
   port: 8080
-
 
 # app name and build version updated during build process from Maven properties.
 info:
@@ -17,3 +33,33 @@ info:
     name: '@project.artifactId@'
   build:
     version: '@project.version@'
+
+# Actuator Configuration
+# Ref: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
+management:
+  endpoints:
+    enabled-by-default: false             # defaults it to false and expose only what you want
+    web:
+      exposure:
+        include:
+        - info
+        - health
+        - prometheus
+        - flyway
+        - loggers
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+      show-details: always
+    flyway:
+      enabled: true
+    loggers:
+      enabled: true
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+    env:
+      enabled: true

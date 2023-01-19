@@ -1,9 +1,3 @@
-#
-# application-hazelcast.yml
-#
-# This is the "hazelcast" profile to integrate with Hazcelcast.
-# 
-
 # Hazelcast
 spring:
   cache:
