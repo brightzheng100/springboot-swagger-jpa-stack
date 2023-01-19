@@ -2,8 +2,8 @@
 <Configuration>
 
     <Appenders>
-        <Console name="ConsoleAppender" target="SYSTEM_OUT">
-            <PatternLayout pattern="==> [%p] %c{1}(%L) - %m%n"/>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <JsonTemplateLayout eventTemplateUri="classpath:Log4j2-otel-layout.json"/>
         </Console>
     </Appenders>
 
@@ -14,7 +14,7 @@
         <Logger name="app" level="debug" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
-        <Root level="error">
+        <Root level="warn">
             <AppenderRef ref="ConsoleAppender"/>
         </Root>
   </Loggers>

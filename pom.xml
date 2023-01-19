@@ -54,6 +54,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-layout-template-json</artifactId>
+		</dependency>
 
 		<!-- Swagger -->
 		<dependency>
@@ -110,25 +114,10 @@
 
 		<!-- OpenTelemetry Log4j Integration -->
 		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-spring-boot</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>io.opentelemetry.instrumentation</groupId>
 			<artifactId>opentelemetry-log4j-2.13.2</artifactId>
 			<version>1.9.2-alpha</version>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-api</artifactId>
-			<version>1.16.0</version>
-		</dependency>
-
-		<!-- Others -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
 		</dependency>
 
 		<!-- testing related dependencies -->
