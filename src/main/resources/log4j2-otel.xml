@@ -3,7 +3,7 @@
 
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
-            <JsonTemplateLayout eventTemplateUri="classpath:Log4j2-otel-layout.json"/>
+            <JsonTemplateLayout eventTemplateUri="classpath:log4j2-otel-layout.json"/>
         </Console>
     </Appenders>
 
