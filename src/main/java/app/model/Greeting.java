@@ -1,9 +1,22 @@
 package app.model;
 
-import lombok.Data;
-
-@Data
 public class Greeting {
-	private final Long id;
-	private final String content;
+	private Long id;
+	private String content;
+	
+	public Greeting() {}
+	
+	public Greeting(Long id, String content) {
+		this.id = id;
+		this.content = content;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	public String getContent() {
+		return content;
+	}
+	
+	
 }

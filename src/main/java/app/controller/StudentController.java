@@ -111,7 +111,11 @@ public class StudentController {
 		LOGGER.info("DELETE v1/students/{}", id);
 		
 		try {
-			this.repository.deleteById(id);
+			Optional<Student> student = this.repository.findById(id);
+			
+			if (student.isPresent()) {
+				this.repository.delete(student.get());
+			}
 			
 			return new ResponseEntity<>(HttpStatus.OK);
 			
