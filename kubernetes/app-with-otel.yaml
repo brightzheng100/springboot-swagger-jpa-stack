@@ -45,7 +45,7 @@ spec:
               protocol: TCP
           env:
             - name: JVM_ARGS
-              value: -Xms512m -Xmx1G
+              value: -Xms512m -Xmx2G
             - name: SPRING_PROFILES_ACTIVE
               value: prod,otel,mysql
             - name: SPRING_DATASOURCE_URL

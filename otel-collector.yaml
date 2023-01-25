@@ -4,23 +4,27 @@ receivers:
       grpc:
         endpoint: 0.0.0.0:55690
       http:
+  tcplog:
+    listen_address: 0.0.0.0:54525
+
 processors:
+  batch:
 
 exporters:
   logging:
-    verbosity: detailed # detailed|normal|basic)
+    verbosity: normal # detailed|normal|basic)
 
 service:
   pipelines:
     traces:
       receivers: [otlp/2]
-      processors: []
+      processors: [batch]
       exporters: [logging]
     metrics:
       receivers: [otlp/2]
-      processors: []
+      processors: [batch]
       exporters: [logging]
     logs:
-      receivers: [otlp/2]
-      processors: []
+      receivers: [tcplog]
+      processors: [batch]
       exporters: [logging]

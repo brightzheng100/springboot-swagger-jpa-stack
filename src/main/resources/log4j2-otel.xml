@@ -5,6 +5,9 @@
         <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
             <JsonTemplateLayout eventTemplateUri="classpath:log4j2-otel-layout.json"/>
         </Console>
+        <Socket name="SocketAppender" host="localhost" port="54525">
+            <JsonTemplateLayout eventTemplateUri="classpath:log4j2-otel-layout.json"/>
+        </Socket>
     </Appenders>
 
   <Loggers>
@@ -12,6 +15,7 @@
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Logger name="app" level="debug" additivity="false">
+            <AppenderRef ref="SocketAppender"/>
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Root level="warn">
