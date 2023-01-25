@@ -3,7 +3,8 @@ ARG PROJECT_DIR="/project"
 
 
 #### COMPILE STAGE
-FROM maven:3.6.3-jdk-11-openj9 as compile
+#FROM maven:3.6.3-jdk-11-openj9 as compile
+FROM maven:3.8.7-eclipse-temurin-11 as compile
 
 # Args
 ARG PROJECT_DIR
