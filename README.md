@@ -71,7 +71,7 @@ $ mvn clean spring-boot:run
 
 > Note: 
 > 1. Without specifying any profile, it will automatically fall back to `default` profile so `application.yml` and `application-default.yml` will be loaded, where `H2` embedded in-memory will be used;
-> 2. The app serves at port `8080`, as usual.
+> 2. The app serves at port `8080`, as usual, but we can use another port, say `8090` by explictly setting `server.port`, like `-Dspring-boot.run.jvmArguments="-Dserver.port=8090"`
 
 ### Access Swagger UI
 
