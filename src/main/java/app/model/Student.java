@@ -47,5 +47,7 @@ public class Student {
 		this.name = name;
 	}
 	
-	
+	public String toString() {
+		return "{student_id: " + this.getId() + ", student_nid: " + this.getNid() + ", student_name: " + this.getName() + "}";
+	}
 }
