@@ -8,6 +8,8 @@
 # 
 
 spring:
+  application:
+    name: spring boot demo
   # There is a significant change from v2.4+
   # Refer to: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-Config-Data-Migration-Guide#profile-activation
   # profiles:
