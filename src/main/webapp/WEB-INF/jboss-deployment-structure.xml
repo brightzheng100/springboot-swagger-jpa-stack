@@ -4,5 +4,12 @@
      <exclusions>
         <module name="org.apache.logging.log4j.api"/>
     </exclusions>
+    <dependencies>
+        <system>
+            <paths>
+                <path name="com/sun/management"/>
+            </paths>
+        </system>
+    </dependencies>
   </deployment>
 </jboss-deployment-structure>
