@@ -66,12 +66,16 @@ kill -9 $(cat app.pid)
 nohup bash -c "mvn spring-boot:run" &> app.out & echo $! > app.pid
 ```
 
-You may have a quick test:
+You may have a quick test for different endpoints:
 
 ```sh
 curl http://localhost:8080/api/v1/spans
 curl http://localhost:8080/api/v1/spans/1
 curl http://localhost:8080/api/v1/spans/error
+curl http://localhost:8080/api/v1/students
+curl http://localhost:8080/api/v1/students/10001
+curl http://localhost:8080/api/v1/httpbin/get
+curl -X POST http://localhost:8080/api/v1/httpbin/post
 ```
 
 ### Load some traffic

@@ -26,10 +26,14 @@ while true; do
     # get error
     curl -i -X GET "$url/api/v1/spans/error"
 
+
     ###### other auto-instrumented stuff ######
 
-    # get students
+    # get all students
     curl -i -X GET "$url/api/v1/students"
+    # get one student
+    curl -i -X GET "$url/api/v1/students/10001"
+
     # get external websites
     curl -i -X GET "$url/api/v1/httpbin/get"
     curl -i -X POST "$url/api/v1/httpbin/post"
