@@ -76,3 +76,8 @@ buildNumber.properties
 
 # vscode
 .vscode/
+
+app.out
+app.pid
+load.out
+load.pid

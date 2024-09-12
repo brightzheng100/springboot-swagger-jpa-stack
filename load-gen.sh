@@ -14,26 +14,24 @@ if ! [[ -z $1 ]]; then
     url=$1
 fi
 
-
-# DELETE it if any
-curl -i -X DELETE "$url/api/v1/students/90001"
-
 while true; do
-    sleep 0.5
+    sleep 1
     
-    # POST to create a new record
-    curl -i -X POST "$url/api/v1/students" \
-        -H "Content-Type: application/json" \
-        --data '{"id":90001,"nid":"test","name":"test"}'
+    ###### javatrace specific package ######
 
-    # GET it back, without hitting the database directly!
-    curl -i -X GET "$url/api/v1/students/90001"
+    # get one step
+    curl -i -X GET "$url/api/v1/spans/1"
+    # get all steps
+    curl -i -X GET "$url/api/v1/spans/"
+    # get error
+    curl -i -X GET "$url/api/v1/spans/error"
 
-    # PUT to update this record
-    curl -i -X PUT "$url/api/v1/students" \
-        -H "Content-Type: application/json" \
-        --data '{"id":90001,"nid":"test2","name":"test2"}'
+    ###### other auto-instrumented stuff ######
 
-    # GET it back, again, without hitting the database directly!
-    curl -X GET "$url/api/v1/students/90001"
+    # get students
+    curl -i -X GET "$url/api/v1/students"
+    # get external websites
+    curl -i -X GET "$url/api/v1/httpbin/get"
+    curl -i -X POST "$url/api/v1/httpbin/post"
+
 done
