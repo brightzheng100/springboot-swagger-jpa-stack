@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="==> [%p] %c{1}(%L) - %m%n"/>
+        </Console>
+    </Appenders>
+
+  <Loggers>
+        <Logger name="org.springframework" level="info" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+        <Logger name="app" level="debug" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Root>
+  </Loggers>
+
+</Configuration>

@@ -1,0 +1,6 @@
+#
+# otel specific profile for OpenTelemetry demo 
+#
+
+logging:
+  config: classpath:log4j2-otel.xml

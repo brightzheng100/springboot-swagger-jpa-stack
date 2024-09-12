@@ -1,0 +1,16 @@
+# MySQL
+spring:
+  jpa:
+    database: MYSQL
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  datasource:
+    platform: mysql                           # database platform
+    driverClassName: com.mysql.cj.jdbc.Driver # JDBC Driver
+    url: jdbc:mysql://mysql:3306/testdb       # JDBC URL, e.g. jdbc:mysql://localhost:3306/testdb
+    username: myuser                          # JDBC Username
+    password: mypassword                      # JDBC Password
+  flyway:                                     # flyway
+    schemas:
+    - testdb
