@@ -123,6 +123,26 @@ Click the Connect button and we can play with the database.
 ![h2-main](misc/screenshot-h2-main.png "H2 Main")
 
 
+## Run it at backend with some traffic
+
+Run the app:
+
+```sh
+$ nohup bash -c "mvn spring-boot:run" &> app.out & echo $! > app.pid
+```
+
+> Note: kill it by `kill -9 $(cat app.pid)`.
+
+Generate some traffic:
+
+```sh
+$ nohup bash -c "./load-gen.sh" &> load.out & echo $! > load.pid
+```
+
+> Note: kill it by `kill -9 $(cat load.pid)`.
+
+
+
 ## Run it with specified Spring Profile(s)
 
 Somehow, the Spring Boot profiles evolve to something quite difficult to understand.
