@@ -25,6 +25,8 @@ while true; do
     curl -i -X GET "$url/api/v1/spans/"
     # get error
     curl -i -X GET "$url/api/v1/spans/error"
+    # get error2
+    curl -i -X GET "$url/api/v1/spans/error2"
 
 
     ###### other auto-instrumented stuff ######

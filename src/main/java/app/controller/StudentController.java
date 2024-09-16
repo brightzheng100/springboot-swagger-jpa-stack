@@ -32,7 +32,6 @@ public class StudentController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<?> findStudentById(@PathVariable("id") Long id) {
-
 		try {
 			Optional<Student> student = this.repository.findById(id);
 			

@@ -25,7 +25,7 @@ public class SpansController {
 		LOGGER.info("GET /api/v1/spans/step/{}", id);
 
 		SpanSupport.annotate("tags.service", SERVICE_NAME);
-		SpanSupport.annotate("tags.endpoint", "/spans/{id}");
+		SpanSupport.annotate("tags.endpoint", "GET /spans/{id}");
 		SpanSupport.annotate("tags.call.name", "GET /spans/" + id);
 		SpanSupport.annotate("params.id", String.valueOf(id));
 
@@ -40,7 +40,7 @@ public class SpansController {
 		LOGGER.info("GET /api/v1/spans/steps");
 
 		SpanSupport.annotate("tags.service", SERVICE_NAME);
-		SpanSupport.annotate("tags.endpoint", "/spans/steps");
+		SpanSupport.annotate("tags.endpoint", "GET /spans/steps");
 		SpanSupport.annotate("tags.call.name", "GET /spans/steps");
 
 		do_step1();
@@ -66,12 +66,12 @@ public class SpansController {
 	}
 
 	@GetMapping("/error")
-	@Span(type = Span.Type.ENTRY, value = "my-span-in-error")
+	@Span(type = Span.Type.ENTRY, value = "my-span-with-error")
 	public ResponseEntity<?> error(){
 		LOGGER.info("GET /api/v1/spans/error");
 
 		SpanSupport.annotate("tags.service", SERVICE_NAME);
-		SpanSupport.annotate("tags.endpoint", "/spans/error");
+		SpanSupport.annotate("tags.endpoint", "GET /spans/error");
 		SpanSupport.annotate("tags.call.name", "GET /spans/error");
 
 		try {
@@ -84,6 +84,25 @@ public class SpansController {
 			LOGGER.error("Error out!", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@GetMapping("/error2")
+	@Span(type = Span.Type.ENTRY, value = "my-span-with-error2")
+	public ResponseEntity<?> error2() throws InterruptedException{
+		LOGGER.info("GET /api/v1/spans/error2");
+
+		SpanSupport.annotate("tags.service", SERVICE_NAME);
+		SpanSupport.annotate("tags.endpoint", "GET /spans/error2");
+		SpanSupport.annotate("tags.call.name", "GET /spans/error2");
+
+		do_step1();
+
+		// mark the call is Erroneous
+		SpanSupport.annotate("error", "true");
+
+		LOGGER.error("It's error as I said it!", new Exception("I actually don't know what's wrong!"));
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

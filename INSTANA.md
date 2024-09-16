@@ -5,10 +5,12 @@ So there is zero-touch while enjoying the tracing, by default.
 
 Meanwhile, there is also a configuration-based Java SDK by which we can further enhance the tracing context by configuration, without a need for code changes.
 
+But if there is a need, you may also instrument manually by using Instana SDK, or OpenTelemetry SDK -- Instana supports either of them out of the box.
+
 
 ### Why am I doing this?
 
-Well, this is just a simple experiment for how to use Instana SDK programmatically.
+Well, this is just a simple experiment for how to use Instana SDK programmatically, or by configuration, or both.
 
 
 ### The code changes
@@ -22,12 +24,11 @@ In `pom.xml`, define a version variable:
 And then add the SDK as the dependency:
 
 ```xml
-		<!-- Instana SDK -->
-		<dependency>
-			<groupId>com.instana</groupId>
-			<artifactId>instana-java-sdk</artifactId>
-			<version>${instana-java-sdk.version}</version>
-		</dependency>
+  <dependency>
+    <groupId>com.instana</groupId>
+    <artifactId>instana-java-sdk</artifactId>
+    <version>${instana-java-sdk.version}</version>
+  </dependency>
 ```
 
 All Instana related code is within one controller, which is [src/main/java/app/controller/SpansController.java](src/main/java/app/controller/SpansController.java).
@@ -35,10 +36,10 @@ All Instana related code is within one controller, which is [src/main/java/app/c
 
 ### Agent configuration
 
-We should enable the `javatrace` while disabling the default auto-instrumentation:
+We should enable the `javatrace`, like this:
 
 ```sh
-cat <<EOF | sudo tee /opt/instana/agent/etc/instana/configuration-javatrace.yaml
+$ cat <<EOF | sudo tee /opt/instana/agent/etc/instana/configuration-javatrace.yaml
 com.instana.plugin.javatrace:
   instrumentation:
     enabled: true
@@ -48,7 +49,45 @@ com.instana.plugin.javatrace:
 EOF
 ```
 
-It's recommended to configure the zone, if haven't:
+Or if you want to see how configuration-based SDK works for the code in [src/main/java/app/controller/StudentController.java](src/main/java/app/controller/StudentController.java), without the need to change code, update the configuration with some more sections:
+
+```sh
+$ cat <<EOF | sudo tee /opt/instana/agent/etc/instana/configuration-javatrace.yaml
+com.instana.plugin.javatrace:
+  instrumentation:
+    enabled: true
+    sdk:
+      packages:
+        - 'app.controller'
+      targets:
+        - match:
+            type: class
+            name: app.controller.StudentController
+            method: findStudentById
+          span:
+            name: findStudentById
+            type: ENTRY
+            stackDepth: 0
+            tags:
+              - kind: argument
+                name: student_id
+                index: 0
+        - match:
+            type: class
+            name: app.controller.StudentController
+            method: createStudent
+          span:
+            name: createStudent
+            type: ENTRY
+            stackDepth: 0
+            tags:
+              - kind: argument
+                name: student
+                index: 0
+EOF
+```
+
+Meanwhile, it's recommended to configure the zone for where the agent is deployed, which has nothing to do with instrumentation of course:
 
 ```sh
 INSTANA_ZONE="Student-0-Zone" && \
@@ -72,6 +111,7 @@ You may have a quick test for different endpoints:
 curl http://localhost:8080/api/v1/spans
 curl http://localhost:8080/api/v1/spans/1
 curl http://localhost:8080/api/v1/spans/error
+curl http://localhost:8080/api/v1/spans/error2
 curl http://localhost:8080/api/v1/students
 curl http://localhost:8080/api/v1/students/10001
 curl http://localhost:8080/api/v1/httpbin/get
