@@ -60,6 +60,7 @@ com.instana.plugin.javatrace:
       packages:
         - 'app.controller'
       targets:
+        # 1. showcase how to expose parameter as tag
         - match:
             type: class
             name: app.controller.StudentController
@@ -67,23 +68,24 @@ com.instana.plugin.javatrace:
           span:
             name: findStudentById
             type: ENTRY
-            stackDepth: 0
             tags:
               - kind: argument
                 name: student_id
                 index: 0
+        # 2. showcase how to expose either parameter, or return, or both as tags
         - match:
             type: class
-            name: app.controller.StudentController
-            method: createStudent
+            name: app.controller.ExternalController
+            method: echo
           span:
-            name: createStudent
-            type: ENTRY
-            stackDepth: 0
+            name: echo
+            type: INTERMEDIATE
             tags:
               - kind: argument
-                name: student
+                name: input
                 index: 0
+              - kind: return
+                name: output
 EOF
 ```
 

@@ -39,6 +39,10 @@ public class ExternalController {
 		HttpGet httpGet = new HttpGet(HTTPBIN_URL + "/get");
 		httpGet.setHeader("x-custom-header", header);
 
+		// call some internal dummy method for specific test cases
+		this.echo(header);
+		this.reverse(header);
+
 		try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
 			CloseableHttpResponse response = httpclient.execute(httpGet);
 
@@ -54,6 +58,10 @@ public class ExternalController {
 	@PostMapping("/post")
 	public ResponseEntity<String> post(@RequestParam(value = "header", defaultValue = "hello world") String header) {
 		String resultContent = null;
+
+		// call some internal dummy method for specific test cases
+		this.echo(header);
+		this.reverse(header);
 
 		HttpPost httpPost = new HttpPost(HTTPBIN_URL + "/post");
 
@@ -77,5 +85,15 @@ public class ExternalController {
 		}
 
 		return new ResponseEntity<String>(resultContent, HttpStatus.OK);
+	}
+
+	// just a dummy echo method
+	public String echo(String param) {
+		return "echoing " + param;
+	}
+
+	// just a dummy reverse method
+	public String reverse(String param) {
+		return new StringBuilder(param).reverse().toString();
 	}
 }
