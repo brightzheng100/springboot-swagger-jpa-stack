@@ -25,4 +25,11 @@ public class NegativeController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	@GetMapping("/error")
+	public ResponseEntity<?> error() {
+		int i = 1 / 0;
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
 }

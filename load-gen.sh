@@ -36,4 +36,12 @@ while true; do
 
     # GET it back, again, without hitting the database directly!
     curl -X GET "$url/api/v1/students/90001"
+
+    # Some other traffic
+    # Slowness
+    curl -X GET "$url/api/v1/negative/slowness?delay=8"
+    # Error
+    curl -X GET "$url/api/v1/negative/error"
+    # External
+    curl -X GET "$url/api/v1/external/website?url=https://www.google.com"
 done
