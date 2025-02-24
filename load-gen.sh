@@ -44,4 +44,5 @@ while true; do
     curl -X GET "$url/api/v1/negative/error"
     # External
     curl -X GET "$url/api/v1/external/website?url=https://www.google.com"
+    curl -X GET "$url/api/v1/external/website?url=https://www.ibm.com"
 done
