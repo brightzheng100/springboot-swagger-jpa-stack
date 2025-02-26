@@ -120,6 +120,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Others -->
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<version>5.3.1</version>
+		</dependency>
+
 		<!-- testing related dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

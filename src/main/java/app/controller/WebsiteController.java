@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/external")
-public class ExternalController {
+@RequestMapping("/api/v1/website")
+public class WebsiteController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ExternalController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(WebsiteController.class);
 
-	@GetMapping("/website")
+	@GetMapping("/")
 	public ResponseEntity<?> google(@RequestParam(value = "url", defaultValue = "https://www.google.com") String url) {
 		LOGGER.info("GET v1/external/website?url={}", url);
 		try {

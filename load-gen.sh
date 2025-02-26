@@ -19,7 +19,7 @@ fi
 curl -i -X DELETE "$url/api/v1/students/90001"
 
 while true; do
-    sleep 0.5
+    sleep 0.1
     
     # POST to create a new record
     curl -i -X POST "$url/api/v1/students" \
@@ -37,12 +37,17 @@ while true; do
     # GET it back, again, without hitting the database directly!
     curl -X GET "$url/api/v1/students/90001"
 
-    # Some other traffic
     # Slowness
     curl -X GET "$url/api/v1/negative/slowness?delay=8"
+
     # Error
     curl -X GET "$url/api/v1/negative/error"
-    # External
-    curl -X GET "$url/api/v1/external/website?url=https://www.google.com"
-    curl -X GET "$url/api/v1/external/website?url=https://www.ibm.com"
+
+    # Website
+    curl -X GET "$url/api/v1/website/?url=https://www.google.com"
+    curl -X GET "$url/api/v1/website/?url=https://www.ibm.com"
+
+    # HttpBin
+    curl -i -X GET "$url/api/v1/httpbin/get"
+    curl -i -X POST "$url/api/v1/httpbin/post"
 done
