@@ -75,7 +75,7 @@ com.instana.plugin.javatrace:
         # 2. showcase how to expose either parameter, or return, or both as tags
         - match:
             type: class
-            name: app.controller.ExternalController
+            name: app.controller.HttpBinController
             method: echo
           span:
             name: echo

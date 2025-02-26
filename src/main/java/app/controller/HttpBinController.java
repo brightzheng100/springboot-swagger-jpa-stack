@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/httpbin")
-public class ExternalController {
+public class HttpBinController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ExternalController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(HttpBinController.class);
 	private static final String HTTPBIN_URL = "https://httpbin.org";
 
 	@GetMapping("/get")
