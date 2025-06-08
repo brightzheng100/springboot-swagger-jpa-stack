@@ -281,22 +281,20 @@ After that, you can visualize Hazelcast on the management console.
 
 ## Containerize It
 
-A `Dockerfile` is provided for you to containerize the app with multi-stage build in mind.
+A `Dockerfile` is provided for you to containerize the app with multi-stage, multi-arch build in mind.
 
 ```sh
-# Define how to tag your image
-$ export IMAGE_NAMESPACE=<YOUR REGISTRY WITH NAMESPACE, e.g. docker.io/brightzheng100>
+docker buildx create --use
 
-# For X84_64 or amd64, use "latest" for simplicity purposes
-$ export IMAGE_TAG=latest
-# For arm64, use a dedicated tag "arm64"
-$ export IMAGE_TAG=arm64
+# Change to your namespace and/or tag, if needed
+export IMAGE_NAMESPACE=docker.io/brightzheng100
+export IMAGE_TAG=latest
 
-# Build it
-$ docker build -t ${IMAGE_NAMESPACE}/springboot-swagger-jpa-stack:${IMAGE_TAG} .
-
-# Optionally, push it to the Docker Registry
-$ docker push ${IMAGE_NAMESPACE}/springboot-swagger-jpa-stack:${IMAGE_TAG}
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --file Dockerfile \
+  --push \
+  -t ${IMAGE_NAMESPACE}/springboot-swagger-jpa-stack:${IMAGE_TAG} .
 ```
 
 There are a couple of build args provided, with defaults:
@@ -310,10 +308,13 @@ For example, if we want to build the Image tagged as:
 - org.opencontainers.image.title=my-app
 - org.opencontainers.image.version=1.0.0
 
-```
-$ docker build \
+```sh
+docker buildx build \
   --build-arg ARTIFACT_TITLE="my-app" \
   --build-arg ARTIFACT_VERSION="1.0.0" \
+  --platform linux/amd64,linux/arm64 \
+  --file Dockerfile \
+  --push \
   -t ${IMAGE_NAMESPACE}/springboot-swagger-jpa-stack:${IMAGE_TAG} .
 ```
 
@@ -327,7 +328,7 @@ Please note that we can always inject the Spring-powered environment variables a
 
 So to run it with Docker's ENV `JVM_ARGS` and Spring variables `SPRING_PROFILES_ACTIVE`, `SPRING_DATASOURCE_URL`, we can do this:
 
-```
+```sh
 $ docker run \
   -e "JVM_ARGS=-Xms2G -Xmx2G" \
   -e "SPRING_PROFILES_ACTIVE=prod,mysql" \
@@ -350,26 +351,37 @@ $ docker run \
 
 ```sh
 # Define where to look up for your Docker image, or you can simply use mine
-$ export IMAGE_NAMESPACE=docker.io/brightzheng100
+export IMAGE_NAMESPACE=docker.io/brightzheng100
 # The database URL, which in our case is also within K8s/OCP, but it can be external too
-$ export DATASOURCE_URL=jdbc:mysql://mysql:3306/testdb
+export DATASOURCE_URL=jdbc:mysql://mysql:3306/testdb
+
 # Export the right images for the right CPU arch
 # For x86_64 or amd64
-$ export IMAGE_MYSQL=mysql:5.7 && export IMAGE_APP=springboot-swagger-jpa-stack:latest
+export IMAGE_MYSQL=mysql:5.7 && export IMAGE_APP=springboot-swagger-jpa-stack:latest
 # For ARM64
-$ export IMAGE_MYSQL=arm64v8/mysql && export IMAGE_APP=springboot-swagger-jpa-stack:arm64
+export IMAGE_MYSQL=arm64v8/mysql && export IMAGE_APP=springboot-swagger-jpa-stack:latest
 
 # Deploy it to your desired namespace, say demo here, with a MySQL db
-$ kubectl create namespace demo
-$ kubectl apply -f kubernetes/secret.yaml -n demo
-$ envsubst < kubernetes/mysql.yaml | kubectl apply -f - -n demo
-$ envsubst < kubernetes/app.yaml | kubectl apply -f - -n demo
+kubectl create namespace demo
+kubectl apply -f kubernetes/secret.yaml -n demo
+envsubst < kubernetes/mysql.yaml | kubectl apply -f - -n demo
+envsubst < kubernetes/app.yaml | kubectl apply -f - -n demo
 ```
 
-I've provided a simple `load-gen` tool too which will keep accessing some RESTful APIs:
+I've provided a simple `load-gen` tool too, which is built by:
 
 ```sh
-$ kubectl apply -f kubernetes/load-gen.yaml -n demo
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --file Dockerfile.load-gen \
+  --push \
+  -t brightzheng100/springboot-swagger-jpa-stack-load-gen:latest .
+```
+
+The load-gen pod will keep accessing some RESTful APIs:
+
+```sh
+kubectl apply -f kubernetes/load-gen.yaml -n demo
 ```
 
 ## OpenTelemetry Experiments

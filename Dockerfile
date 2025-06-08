@@ -3,8 +3,7 @@ ARG PROJECT_DIR="/project"
 
 
 #### COMPILE STAGE
-#FROM maven:3.6.3-jdk-11-openj9 as compile
-FROM maven:3.8.7-eclipse-temurin-11 as compile
+FROM maven:3.9.9-eclipse-temurin-11 AS compile
 
 # Args
 ARG PROJECT_DIR
@@ -16,8 +15,8 @@ RUN  apt-get -qq update \
   && rm -rf /tmp/* /var/lib/apt/lists/*
 
 # Create non-root user / group to run
-RUN  groupadd --gid 1000 java_group \
-  && useradd --uid 1000 --gid java_group --shell /bin/bash --create-home java_user \
+RUN  groupadd --gid 2000 java_group \
+  && useradd --uid 2000 --gid java_group --shell /bin/bash --create-home java_user \
   && mkdir -p /mvn/repository && chown -R java_user:java_group /mvn \
   && mkdir ${PROJECT_DIR} && chown -R java_user:java_group ${PROJECT_DIR}
 
@@ -37,7 +36,6 @@ RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 
 #### BUILD STAGE
-#FROM adoptopenjdk:11-jdk-openj9
 FROM eclipse-temurin:11
 
 # Build args
@@ -55,8 +53,8 @@ RUN  apt-get -qq update \
   && rm -rf /tmp/* /var/lib/apt/lists/*
 
 # Create non-root user / group to run
-RUN groupadd --gid 1000 java_group \
-  && useradd --uid 1000 --gid java_group --shell /bin/bash --create-home java_user \
+RUN groupadd --gid 2000 java_group \
+  && useradd --uid 2000 --gid java_group --shell /bin/bash --create-home java_user \
   && mkdir /app && chown -R java_user:java_group /app
 
 # Switch to non-root user and workdir
