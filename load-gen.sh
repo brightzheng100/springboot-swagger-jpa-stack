@@ -2,14 +2,14 @@
 
 #
 # Typical Usage:
-# 
+#
 # 1. Port forward
 #   pod=`kubectl -n labs get pod -l app=springboot-swagger-jpa-stack -o json | jq -r ".items[0].metadata.name"`
 #   kubectl port-forward -n labs $pod 8080:8080
-# 
+#
 #
 
-url="http://localhost:8080"
+url="http://localhost:${APP_PORT:-8080}"
 if ! [[ -z $1 ]]; then
     url=$1
 fi
@@ -20,7 +20,7 @@ curl -i -X DELETE "$url/api/v1/students/90001"
 
 while true; do
     sleep 0.1
-    
+
     # POST to create a new record
     curl -i -X POST "$url/api/v1/students" \
         -H "Content-Type: application/json" \
